@@ -1,12 +1,12 @@
 import express from "express"
-import cors from "cors"
+// import cors from "cors"
 import listEndpoints from "express-list-endpoints"
 import mongoose from "mongoose"
 
 import blogpostsRouter from "./services/blogposts/index.js"
 import usersRouter from "./services/users/index.js"
 
-import { notFoundErrorHandler, badRequestErrorHandler, catchAllErrorHandler,unAuthorizedHandler } from "./errorHandlers.js"
+import { forbiddenHandler, notFoundErrorHandler, badRequestErrorHandler, catchAllErrorHandler, unAuthorizedHandler } from "./errorHandlers.js"
 
 const server = express()
 
@@ -27,6 +27,7 @@ server.use("/users", usersRouter)
 server.use(badRequestErrorHandler)
 server.use(notFoundErrorHandler)
 server.use(unAuthorizedHandler)
+server.use(forbiddenHandler)
 server.use(catchAllErrorHandler)
 
 console.table(listEndpoints(server))
@@ -39,7 +40,7 @@ mongoose
   })
   .then(
     server.listen(port, () => {
-      console.log("Server running on port" , port)
+      console.log("Server running on port", port)
     })
   )
   .catch(err => console.log("Mongo connection error ", err))

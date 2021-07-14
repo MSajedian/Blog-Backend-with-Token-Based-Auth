@@ -1,6 +1,6 @@
 import express from "express"
 import createError from "http-errors"
-import { basicAuthMiddleware } from '../../auth/basic.js'
+import { JWTAuthMiddleware } from '../../auth/middlewares.js'
 import { adminOnly } from '../../auth/admin.js'
 import BlogpostModel from "./schema.js"
 
@@ -8,7 +8,7 @@ const blogpostsRouter = express.Router()
 
 
 
-blogpostsRouter.get("/", basicAuthMiddleware, adminOnly, async (req, res, next) => {
+blogpostsRouter.get("/", JWTAuthMiddleware, adminOnly, async (req, res, next) => {
   try {
     const blogposts = await BlogpostModel.find().populate("users")
     res.send(blogposts)
@@ -18,7 +18,7 @@ blogpostsRouter.get("/", basicAuthMiddleware, adminOnly, async (req, res, next) 
   }
 })
 
-blogpostsRouter.get("/me/stories", basicAuthMiddleware, async (req, res, next) => {
+blogpostsRouter.get("/me/stories", JWTAuthMiddleware, async (req, res, next) => {
   try {
     const blogposts = await BlogpostModel.find({ users: req.user._id }).populate("users")
     res.send(blogposts)
@@ -28,7 +28,7 @@ blogpostsRouter.get("/me/stories", basicAuthMiddleware, async (req, res, next) =
   }
 })
 
-blogpostsRouter.post("/", basicAuthMiddleware, async (req, res, next) => {
+blogpostsRouter.post("/", JWTAuthMiddleware, async (req, res, next) => {
   try {
     const newBlogpost = new BlogpostModel(req.body)
     const { _id } = await newBlogpost.save()
@@ -40,7 +40,7 @@ blogpostsRouter.post("/", basicAuthMiddleware, async (req, res, next) => {
   }
 })
 
-blogpostsRouter.get("/:id", basicAuthMiddleware, async (req, res, next) => {
+blogpostsRouter.get("/:id", JWTAuthMiddleware, async (req, res, next) => {
   try {
     const id = req.params.id
     const blogpost = await BlogpostModel.findById(id).populate("users")
@@ -55,7 +55,7 @@ blogpostsRouter.get("/:id", basicAuthMiddleware, async (req, res, next) => {
   }
 })
 
-blogpostsRouter.put("/:id", basicAuthMiddleware, async (req, res, next) => {
+blogpostsRouter.put("/:id", JWTAuthMiddleware, async (req, res, next) => {
   try {
     const blogpost = await BlogpostModel.findByIdAndUpdate(req.params.id, req.body, {
       runValidators: true,
@@ -72,7 +72,7 @@ blogpostsRouter.put("/:id", basicAuthMiddleware, async (req, res, next) => {
   }
 })
 
-blogpostsRouter.delete("/:id", basicAuthMiddleware, async (req, res, next) => {
+blogpostsRouter.delete("/:id", JWTAuthMiddleware, async (req, res, next) => {
   try {
     const blogpost = await BlogpostModel.findByIdAndDelete(req.params.id)
     if (blogpost) {
