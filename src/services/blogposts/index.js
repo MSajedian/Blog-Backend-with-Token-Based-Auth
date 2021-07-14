@@ -18,7 +18,8 @@ blogpostsRouter.get("/", JWTAuthMiddleware, adminOnly, async (req, res, next) =>
 
 blogpostsRouter.get("/me/stories", JWTAuthMiddleware, async (req, res, next) => {
   try {
-    const blogposts = await BlogpostModel.find({ users: req.user._id }).populate("users")
+    console.log('req.user._id:', req.user._id)
+    const blogposts = await BlogpostModel.find({ users: req.user._id.toString() }).populate("users")
     res.send(blogposts)
   } catch (error) {
     console.log(error)
