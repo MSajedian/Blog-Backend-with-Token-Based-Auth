@@ -9,7 +9,6 @@ import createError from "http-errors"
 
 const usersRouter = express.Router()
 
-
 usersRouter.get("/", JWTAuthMiddleware, adminOnly, async (req, res, next) => {
   try {
     const users = await UserModel.find()
